@@ -918,16 +918,17 @@ extension AgentCommand {
 
     private func hasConfiguredAIProvider(configuration: PeekabooCore.ConfigurationManager) -> Bool {
         let hasOpenAI = configuration.getOpenAIAPIKey()?.isEmpty == false
+        let hasWecode = configuration.getWecodeAPIKey()?.isEmpty == false
         let hasAnthropic = configuration.getAnthropicAPIKey()?.isEmpty == false
         let hasGemini = configuration.getGeminiAPIKey()?.isEmpty == false
-        return hasOpenAI || hasAnthropic || hasGemini
+        return hasOpenAI || hasWecode || hasAnthropic || hasGemini
     }
 
     private func emitAgentUnavailableMessage() {
         if self.jsonOutput {
             let error = [
                 "success": false,
-                "error": "Agent service not available. Please set OPENAI_API_KEY, ANTHROPIC_API_KEY, or GEMINI_API_KEY."
+                "error": "Agent service not available. Please set OPENAI_API_KEY, WECODE_API_KEY, ANTHROPIC_API_KEY, or GEMINI_API_KEY."
             ] as [String: Any]
             if let jsonData = try? JSONSerialization.data(withJSONObject: error, options: .prettyPrinted),
                let jsonString = String(data: jsonData, encoding: .utf8) {
@@ -959,6 +960,10 @@ extension AgentCommand {
         case let .openai(model):
             if Self.supportedOpenAIInputs.contains(model) {
                 return .openai(.gpt51)
+            }
+        case let .wecode(model):
+            if Self.supportedWecodeInputs.contains(model) {
+                return .wecode(.gpt52)
             }
         case let .anthropic(model):
             if Self.supportedAnthropicInputs.contains(model) {
@@ -1000,6 +1005,10 @@ extension AgentCommand {
         .gpt4oRealtime,
         .o4Mini,
     ]
+    
+    private static let supportedWecodeInputs: Set<LanguageModel.Wecode> = [
+        .gpt52
+    ]
 
     private static let supportedAnthropicInputs: Set<LanguageModel.Anthropic> = [
         .sonnet45,
@@ -1027,6 +1036,8 @@ extension AgentCommand {
         switch model {
         case .openai:
             return configuration.getOpenAIAPIKey()?.isEmpty == false
+        case .wecode:
+            return configuration.getWecodeAPIKey()?.isEmpty == false
         case .anthropic:
             return configuration.getAnthropicAPIKey()?.isEmpty == false
         case .google:
@@ -1040,6 +1051,8 @@ extension AgentCommand {
         switch model {
         case .openai:
             "OpenAI"
+        case .wecode:
+            "Wecode"
         case .anthropic:
             "Anthropic"
         case .google:
@@ -1053,6 +1066,8 @@ extension AgentCommand {
         switch model {
         case .openai:
             "OPENAI_API_KEY"
+        case .wecode:
+            "WECODE_API_KEY"
         case .anthropic:
             "ANTHROPIC_API_KEY"
         case .google:

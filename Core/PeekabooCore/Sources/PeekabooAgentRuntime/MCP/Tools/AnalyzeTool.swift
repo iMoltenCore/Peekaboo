@@ -47,7 +47,7 @@ public struct AnalyzeTool: MCPTool {
                     properties: [
                         "type": SchemaBuilder.string(
                             description: "AI provider, default: auto. 'auto' uses server's",
-                            enum: ["auto", "ollama", "openai", "anthropic", "grok"],
+                            enum: ["auto", "ollama", "openai", "wecode", "anthropic", "grok"],
                             default: "auto"),
                         "model": SchemaBuilder.string(
                             description: "Optional. Model name. If omitted, uses server defaults."),
@@ -178,6 +178,8 @@ public struct AnalyzeTool: MCPTool {
                 languageModel = .anthropic(.opus45)
             case "openai":
                 languageModel = .openai(.gpt51)
+            case "wecode":
+                languageModel = .wecode(.gpt52)
             case "grok":
                 languageModel = .grok(.grok4)
             case "ollama":

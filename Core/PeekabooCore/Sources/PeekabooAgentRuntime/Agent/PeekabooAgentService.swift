@@ -64,6 +64,8 @@ public final class PeekabooAgentService: AgentServiceProtocol {
             let apiKey: String? = switch model {
             case .openai:
                 config.getAPIKey(for: .openai)
+            case .wecode:
+                config.getAPIKey(for: .wecode)
             case .anthropic:
                 config.getAPIKey(for: .anthropic)
             case .google:
