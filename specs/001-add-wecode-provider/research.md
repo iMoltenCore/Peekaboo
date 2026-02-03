@@ -1,31 +1,42 @@
-# Phase 0 Research: Add Wecode Provider
+# Research: Add Wecode Provider
 
-## Decision 1: Provider integration point
+## Decision 1: Aggregate stream for non-streaming requests
 
-- **Decision**: Implement Wecode as a first-class provider in Tachikoma alongside
-  existing providers, mirroring the Responses-style streaming interface.
-- **Rationale**: Keeps provider logic centralized and matches current provider
-  selection and model routing patterns.
-- **Alternatives considered**: Treat Wecode as a custom provider only.
+**Decision**: Implement `generateText` by collecting `streamText` deltas into a
+single response.
 
-## Decision 2: Non-streaming text behavior
+**Rationale**: `GoogleProvider` already aggregates `streamText` into a
+`ProviderResponse`, collecting text, tool calls, usage, and finish reason. This
+matches the requirement that Wecode does not support non-streaming directly.
 
-- **Decision**: Implement non-streaming text by collecting streamed chunks and
-  returning a single combined response in order.
-- **Rationale**: Wecode does not support non-streaming output directly, and
-  aggregation preserves compatibility with existing text workflows.
-- **Alternatives considered**: Disallow non-streaming requests for Wecode.
+**Alternatives considered**:
 
-## Decision 3: CLI agent compatibility validation
+- Implement a separate non-streaming API path. Rejected because Wecode does not
+  support it and it would duplicate logic.
 
-- **Decision**: Validate with `peekaboo agent "hello"` using Wecode after
-  integration and ensure missing credentials are surfaced with clear errors.
-- **Rationale**: The agent path is the primary CLI entry for text generation and
-  must work end-to-end.
-- **Alternatives considered**: Only test via provider-specific unit tests.
+## Decision 2: Use existing stream delta conventions
 
-## Decision 4: Local testing credential handling
+**Decision**: Follow `TextStreamDelta` conventions for text, tool calls, and done
+events, and derive usage/finish reason from the done event.
 
-- **Decision**: Use `/tmp/key` as the local API key source during manual testing.
-- **Rationale**: Matches provided testing guidance and avoids committing secrets.
-- **Alternatives considered**: Require real credentials or skip manual testing.
+**Rationale**: `TextStreamDelta` is the canonical stream type in Tachikoma, and
+providers already emit `.text`, `.tool`, and `.done`. `GoogleProvider` uses this
+pattern and overrides finish reason to `.toolCalls` when tool calls are present.
+
+**Alternatives considered**:
+
+- Custom stream event types. Rejected because it would break provider parity and
+  require downstream changes.
+
+## Decision 3: Keep changes minimal and provider-local
+
+**Decision**: Implement Wecode logic within `WecodeProvider` and reuse shared
+helpers only if they already exist.
+
+**Rationale**: The constitution requires minimal changes and generic abstractions
+only when they reduce duplication. `GoogleProvider` shows a small, local
+aggregation pattern that can be reused without new shared utilities.
+
+**Alternatives considered**:
+
+- Add a new shared aggregator helper. Deferred unless multiple providers need it.
