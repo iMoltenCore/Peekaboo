@@ -3,9 +3,8 @@
 **Feature Branch**: `001-add-wecode-provider`  
 **Created**: 2026-02-03  
 **Status**: Draft  
-**Input**: User description: "Add a new provider, called Wecode in peekaboo. Wecode is similar
-to `OpenAIResponsesProvider` for streamText. But wecode doesn't support generalText directly,
-which should collect all responses from `streamText` instead."
+**Input**: User description: "Add a Wecode provider that streams text output and
+supports non-streaming text by aggregating the streamed response."
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -54,6 +53,19 @@ that a single combined response is returned.
 - How does the system handle an interrupted stream (network or provider error)?
 - What happens when streamed output exceeds typical response size?
 
+### Scope
+
+**In Scope**:
+
+- Add Wecode as a selectable provider for text output.
+- Support streaming text output with Wecode.
+- Provide non-streaming text output by combining streamed content.
+
+**Out of Scope**:
+
+- Changes to non-text features or unrelated providers.
+- New authentication or account management flows.
+
 ## Requirements *(mandatory)*
 
 ### Functional Requirements
@@ -81,6 +93,11 @@ that a single combined response is returned.
 - Existing provider configuration mechanisms can register a new provider entry.
 - Authentication and credentials for Wecode are handled via current provider
   configuration flows.
+
+### Dependencies
+
+- Wecode availability and credentials in the target environment.
+- Existing provider selection workflows remain compatible.
 
 ## Success Criteria *(mandatory)*
 
