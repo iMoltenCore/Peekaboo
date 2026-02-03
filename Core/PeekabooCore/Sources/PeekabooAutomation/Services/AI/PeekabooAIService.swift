@@ -68,6 +68,7 @@ public final class PeekabooAIService {
         case let .openai(m): ("openai", m.modelId)
         case let .anthropic(m): ("anthropic", m.modelId)
         case let .google(m): ("google", m.rawValue)
+        case let .wecode(m): ("wecode", m.modelId)
         case let .mistral(m): ("mistral", m.rawValue)
         case let .groq(m): ("groq", m.rawValue)
         case let .grok(m): ("grok", m.modelId)
@@ -148,6 +149,9 @@ public final class PeekabooAIService {
             case "google", "gemini":
                 if case .google = loose { return loose }
                 return nil
+            case "wecode":
+                if case .wecode = loose { return loose }
+                return .wecode(.custom(modelString))
             case "mistral":
                 if case .mistral = loose { return loose }
                 return nil

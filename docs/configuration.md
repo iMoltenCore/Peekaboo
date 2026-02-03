@@ -44,8 +44,9 @@ Peekaboo resolves settings in this order (highest → lowest):
 ## Provider Variables
 
 - `PEEKABOO_AI_PROVIDERS`: `provider/model` CSV. Example: `openai/gpt-4.1,anthropic/claude-opus-4,grok/grok-4,ollama/llava:latest`.
-- `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, `GROK_API_KEY` | `X_AI_API_KEY` | `XAI_API_KEY`, `GEMINI_API_KEY`: required for their respective providers when using API keys.
+- `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, `GROK_API_KEY` | `X_AI_API_KEY` | `XAI_API_KEY`, `GEMINI_API_KEY`, `WECODE_API_KEY`: required for their respective providers when using API keys.
 - `PEEKABOO_OLLAMA_BASE_URL`: change when your Ollama daemon isn’t on `localhost:11434`.
+- `WECODE_BASE_URL`: override the Wecode API base URL if you need a non-default endpoint.
 
 ## Defaults & Paths
 

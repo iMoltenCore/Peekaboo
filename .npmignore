@@ -31,6 +31,10 @@ tsconfig.json
 *.tsbuildinfo
 .build/
 DerivedData/
+node_modules/
+dist/
+build/
+.env*
 
 # Documentation source
 docs/

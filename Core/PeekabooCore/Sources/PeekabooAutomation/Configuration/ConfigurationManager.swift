@@ -461,6 +461,21 @@ public final class ConfigurationManager: @unchecked Sendable {
         return nil
     }
 
+    /// Get Wecode API key with proper precedence
+    public func getWecodeAPIKey() -> String? {
+        // 1. Environment variable (highest priority)
+        if let envValue = self.environmentValue(for: "WECODE_API_KEY") {
+            return envValue
+        }
+
+        // 2. Credentials file
+        if let credValue = credentials["WECODE_API_KEY"] {
+            return credValue
+        }
+
+        return nil
+    }
+
     /// Get Ollama base URL with proper precedence
     public func getOllamaBaseURL() -> String {
         // Get Ollama base URL with proper precedence

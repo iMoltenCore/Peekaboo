@@ -78,6 +78,12 @@ final class ConfigurationManager: @unchecked Sendable {
         self.coreManager.getOpenAIAPIKey()
     }
 
+    /// Get Wecode API key with proper precedence
+    func getWecodeAPIKey() -> String? {
+        // Get Wecode API key with proper precedence
+        self.coreManager.getWecodeAPIKey()
+    }
+
     /// Get Ollama base URL with proper precedence
     func getOllamaBaseURL() -> String {
         // Get Ollama base URL with proper precedence

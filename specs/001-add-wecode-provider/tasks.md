@@ -16,9 +16,9 @@ description: "Tasks for Add Wecode Provider"
 
 **Purpose**: Project initialization and basic structure
 
-- [ ] T001 Verify Wecode provider scaffolding exists in Tachikoma/Sources/Tachikoma/Providers/Wecode/WecodeProvider.swift
-- [ ] T002 [P] Review provider selection flow in Tachikoma/Sources/Tachikoma/Providers/ProviderFactory.swift
-- [ ] T003 [P] Review stream delta conventions in Tachikoma/Sources/Tachikoma/Core/Types.swift
+- [x] T001 Verify Wecode provider scaffolding exists in Tachikoma/Sources/Tachikoma/Providers/Wecode/WecodeProvider.swift
+- [x] T002 [P] Review provider selection flow in Tachikoma/Sources/Tachikoma/Providers/ProviderFactory.swift
+- [x] T003 [P] Review stream delta conventions in Tachikoma/Sources/Tachikoma/Core/Types.swift
 
 ---
 
@@ -28,9 +28,9 @@ description: "Tasks for Add Wecode Provider"
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T004 Define Wecode model identifiers in Tachikoma/Sources/Tachikoma/Models/LanguageModel.swift
-- [ ] T005 [P] Register Wecode in provider selection flow in Tachikoma/Sources/Tachikoma/Providers/ProviderFactory.swift
-- [ ] T006 [P] Confirm provider configuration keys in Tachikoma/Sources/Tachikoma/Configuration/TachikomaConfiguration.swift
+- [x] T004 Define Wecode model identifiers in Tachikoma/Sources/Tachikoma/Models/LanguageModel.swift
+- [x] T005 [P] Register Wecode in provider selection flow in Tachikoma/Sources/Tachikoma/Providers/ProviderFactory.swift
+- [x] T006 [P] Confirm provider configuration keys in Tachikoma/Sources/Tachikoma/Configuration/TachikomaConfiguration.swift
 
 **Checkpoint**: Foundation ready - user story implementation can now begin in parallel
 
@@ -44,14 +44,14 @@ description: "Tasks for Add Wecode Provider"
 
 ### Tests for User Story 1 (REQUIRED unless explicitly waived) ⚠️
 
-- [ ] T007 [P] [US1] Add streamText test coverage in Tachikoma/Tests/TachikomaTests/Providers/WecodeProviderTests.swift
-- [ ] T008 [P] [US1] Add provider selection test in Tachikoma/Tests/TachikomaTests/Providers/ProviderFactoryTests.swift
+- [x] T007 [P] [US1] Add streamText test coverage in Tachikoma/Tests/TachikomaTests/Providers/WecodeProviderTests.swift
+- [x] T008 [P] [US1] Add provider selection test in Tachikoma/Tests/TachikomaTests/Providers/ProviderFactoryTests.swift
 
 ### Implementation for User Story 1
 
-- [ ] T009 [US1] Implement Wecode streamText in Tachikoma/Sources/Tachikoma/Providers/Wecode/WecodeProvider.swift
-- [ ] T010 [US1] Add Wecode request/response models in Tachikoma/Sources/Tachikoma/Providers/Wecode/
-- [ ] T011 [US1] Add streaming parser in Tachikoma/Sources/Tachikoma/Providers/Wecode/
+- [x] T009 [US1] Implement Wecode streamText in Tachikoma/Sources/Tachikoma/Providers/Wecode/WecodeProvider.swift
+- [x] T010 [US1] Add Wecode request/response models in Tachikoma/Sources/Tachikoma/Providers/Wecode/
+- [x] T011 [US1] Add streaming parser in Tachikoma/Sources/Tachikoma/Providers/Wecode/
 
 **Checkpoint**: User Story 1 should be fully functional and testable independently
 
@@ -65,13 +65,13 @@ description: "Tasks for Add Wecode Provider"
 
 ### Tests for User Story 2 (REQUIRED unless explicitly waived) ⚠️
 
-- [ ] T012 [P] [US2] Add generateText aggregation tests in Tachikoma/Tests/TachikomaTests/Providers/WecodeProviderTests.swift
-- [ ] T013 [P] [US2] Add edge case tests for empty/failed stream in Tachikoma/Tests/TachikomaTests/Providers/WecodeProviderTests.swift
+- [x] T012 [P] [US2] Add generateText aggregation tests in Tachikoma/Tests/TachikomaTests/Providers/WecodeProviderTests.swift
+- [x] T013 [P] [US2] Add edge case tests for empty/failed stream in Tachikoma/Tests/TachikomaTests/Providers/WecodeProviderTests.swift
 
 ### Implementation for User Story 2
 
-- [ ] T014 [US2] Implement Wecode generateText aggregation in Tachikoma/Sources/Tachikoma/Providers/Wecode/WecodeProvider.swift
-- [ ] T015 [US2] Ensure finishReason and usage handling in Tachikoma/Sources/Tachikoma/Providers/Wecode/WecodeProvider.swift
+- [x] T014 [US2] Implement Wecode generateText aggregation in Tachikoma/Sources/Tachikoma/Providers/Wecode/WecodeProvider.swift
+- [x] T015 [US2] Ensure finishReason and usage handling in Tachikoma/Sources/Tachikoma/Providers/Wecode/WecodeProvider.swift
 
 **Checkpoint**: User Story 2 should be functional and testable independently
 
@@ -81,8 +81,8 @@ description: "Tasks for Add Wecode Provider"
 
 **Purpose**: Improvements that affect multiple user stories
 
-- [ ] T016 [P] Update provider documentation in docs/ (add Wecode notes)
-- [ ] T017 [P] Run unit tests for Tachikoma providers in Tachikoma/Tests/
+- [x] T016 [P] Update provider documentation in docs/ (add Wecode notes)
+- [x] T017 [P] Run unit tests for Tachikoma providers in Tachikoma/Tests/
 - [ ] T018 Run `peekaboo agent "hello"` as the final verification step
 
 ---

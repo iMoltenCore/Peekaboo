@@ -288,8 +288,41 @@ extension AgentCommand {
         }
 
         let services = runtime.services
+        let agentService: (any AgentServiceProtocol)? = {
+            if let existing = services.agent {
+                return existing
+            }
 
-        guard let agentService = services.agent else {
+            guard let peekabooServices = services as? PeekabooServices else {
+                return nil
+            }
+
+            peekabooServices.refreshAgentService()
+            if let refreshed = peekabooServices.agent {
+                return refreshed
+            }
+
+            guard self.hasConfiguredAIProvider(configuration: peekabooServices.configuration) else {
+                return nil
+            }
+
+            let providers = peekabooServices.configuration.getAIProviders()
+            let defaultModelName = providers
+                .split(separator: ",")
+                .first
+                .flatMap { $0.split(separator: "/").last }
+                .map(String.init) ?? "gpt-5.1"
+            let defaultModel = LanguageModel.parse(from: defaultModelName) ?? .openai(.gpt51)
+
+            do {
+                return try PeekabooAgentService(services: peekabooServices, defaultModel: defaultModel)
+            } catch {
+                self.printAgentExecutionError("Failed to initialize agent service: \(error.localizedDescription)")
+                return nil
+            }
+        }()
+
+        guard let agentService else {
             self.emitAgentUnavailableMessage()
             return
         }
@@ -920,14 +953,18 @@ extension AgentCommand {
         let hasOpenAI = configuration.getOpenAIAPIKey()?.isEmpty == false
         let hasAnthropic = configuration.getAnthropicAPIKey()?.isEmpty == false
         let hasGemini = configuration.getGeminiAPIKey()?.isEmpty == false
-        return hasOpenAI || hasAnthropic || hasGemini
+        let hasWecodeEnv = ProcessInfo.processInfo.environment["WECODE_API_KEY"]?.isEmpty == false
+        let hasWecode = configuration.getWecodeAPIKey()?.isEmpty == false
+            || TachikomaConfiguration.current.getAPIKey(for: .wecode)?.isEmpty == false
+            || hasWecodeEnv
+        return hasOpenAI || hasAnthropic || hasGemini || hasWecode
     }
 
     private func emitAgentUnavailableMessage() {
         if self.jsonOutput {
             let error = [
                 "success": false,
-                "error": "Agent service not available. Please set OPENAI_API_KEY, ANTHROPIC_API_KEY, or GEMINI_API_KEY."
+                "error": "Agent service not available. Please set OPENAI_API_KEY, ANTHROPIC_API_KEY, GEMINI_API_KEY, or WECODE_API_KEY."
             ] as [String: Any]
             if let jsonData = try? JSONSerialization.data(withJSONObject: error, options: .prettyPrinted),
                let jsonString = String(data: jsonData, encoding: .utf8) {
@@ -938,7 +975,7 @@ extension AgentCommand {
         } else {
             let errorPrefix = [
                 "\(TerminalColor.red)Error: Agent service not available.",
-                " Please set OPENAI_API_KEY, ANTHROPIC_API_KEY, or GEMINI_API_KEY."
+                " Please set OPENAI_API_KEY, ANTHROPIC_API_KEY, GEMINI_API_KEY, or WECODE_API_KEY."
             ].joined()
             let errorMessageLine = [errorPrefix, "\(TerminalColor.reset)"].joined()
             print(errorMessageLine)
@@ -1031,6 +1068,8 @@ extension AgentCommand {
             return configuration.getAnthropicAPIKey()?.isEmpty == false
         case .google:
             return configuration.getGeminiAPIKey()?.isEmpty == false
+        case .wecode:
+            return configuration.getWecodeAPIKey()?.isEmpty == false
         default:
             return false
         }
@@ -1044,6 +1083,8 @@ extension AgentCommand {
             "Anthropic"
         case .google:
             "Google"
+        case .wecode:
+            "Wecode"
         default:
             "the selected provider"
         }
@@ -1057,6 +1098,8 @@ extension AgentCommand {
             "ANTHROPIC_API_KEY"
         case .google:
             "GEMINI_API_KEY"
+        case .wecode:
+            "WECODE_API_KEY"
         default:
             "provider API key"
         }
