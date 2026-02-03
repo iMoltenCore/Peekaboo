@@ -13,7 +13,7 @@ Wecode is a streaming-first provider in Tachikoma. Peekaboo aggregates the strea
 
 - API key: `WECODE_API_KEY`
 - Optional base URL override: `WECODE_BASE_URL` (default: `https://api.wecode.zone/openai`)
-- Provider string: `wecode/<model>` (example: `wecode/wecode`)
+- Provider string: `wecode/<model>` (only `gpt-5.2`; `wecode` is an alias)
 
 ```bash
 export WECODE_API_KEY="..."
@@ -23,5 +23,5 @@ peekaboo agent "hello"
 
 ## Notes
 
-- Streaming emits `text`, `tool`, `done`, and `error` events.
+- Wecode uses the OpenAI Responses streaming format over `/openai/responses`.
 - Tool calls are surfaced to the agent when the provider emits them.

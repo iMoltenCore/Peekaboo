@@ -603,7 +603,11 @@ extension PeekabooServices {
         let components = sources.providers
             .split(separator: ",")
             .map { $0.trimmingCharacters(in: .whitespaces) }
-        let environmentModel = components.first?.split(separator: "/").last.map(String.init)
+        let firstProvider = components.first
+        let providerParts = firstProvider?.split(separator: "/", maxSplits: 1, omittingEmptySubsequences: true)
+        let providerName = providerParts?.first?.lowercased()
+        let providerModel = providerParts?.count == 2 ? String(providerParts?[1] ?? "") : nil
+        let environmentModel = providerName == "wecode" ? "wecode" : providerModel
 
         let hasConflict = sources.isEnvironmentProvided
             && sources.configuredDefault != nil

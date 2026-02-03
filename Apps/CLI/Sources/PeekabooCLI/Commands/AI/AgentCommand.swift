@@ -307,12 +307,25 @@ extension AgentCommand {
             }
 
             let providers = peekabooServices.configuration.getAIProviders()
-            let defaultModelName = providers
-                .split(separator: ",")
-                .first
-                .flatMap { $0.split(separator: "/").last }
-                .map(String.init) ?? "gpt-5.1"
-            let defaultModel = LanguageModel.parse(from: defaultModelName) ?? .openai(.gpt51)
+            let defaultModel: LanguageModel = {
+                guard let firstProvider = providers.split(separator: ",").first else {
+                    return .openai(.gpt51)
+                }
+
+                let parts = firstProvider.split(separator: "/", maxSplits: 1, omittingEmptySubsequences: true)
+                let providerName = parts.first?.lowercased()
+                let modelName = parts.count > 1 ? String(parts[1]) : ""
+
+                if providerName == "wecode" {
+                    if modelName.lowercased() == "wecode" || modelName.isEmpty {
+                        return .wecode(.wecode)
+                    }
+                    return .wecode(.custom(modelName))
+                }
+
+                let fallbackName = modelName.isEmpty ? String(parts.last ?? "") : modelName
+                return LanguageModel.parse(from: fallbackName) ?? .openai(.gpt51)
+            }()
 
             do {
                 return try PeekabooAgentService(services: peekabooServices, defaultModel: defaultModel)
@@ -987,6 +1000,15 @@ extension AgentCommand {
     func parseModelString(_ modelString: String) -> LanguageModel? {
         let trimmed = modelString.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { return nil }
+
+        let providerParts = trimmed.split(separator: "/", maxSplits: 1, omittingEmptySubsequences: true)
+        if providerParts.first?.lowercased() == "wecode" {
+            let modelPart = providerParts.count == 2 ? String(providerParts[1]) : ""
+            if modelPart.isEmpty || modelPart.lowercased() == "wecode" {
+                return .wecode(.wecode)
+            }
+            return .wecode(.custom(modelPart))
+        }
 
         guard let parsed = LanguageModel.parse(from: trimmed) else {
             return nil
