@@ -7,8 +7,9 @@
 
 ## Summary
 
-Add a Wecode provider for Peekaboo text generation with streaming output and a
-non-streaming path that aggregates streamed content into a single response.
+Add Wecode as a selectable provider that streams text output and supports
+non-streaming text by aggregating stream chunks, aligning behavior with existing
+stream-first providers while preserving current workflows.
 
 ## Technical Context
 
@@ -19,14 +20,15 @@ non-streaming path that aggregates streamed content into a single response.
 -->
 
 **Language/Version**: Swift 6.2  
-**Primary Dependencies**: Tachikoma (provider framework), Commander (CLI), PeekabooCore  
-**Storage**: N/A (reuse existing config storage)  
-**Testing**: Swift Testing/XCTest (existing CLI and Tachikoma test suites)  
-**Target Platform**: macOS 15+ CLI
-**Project Type**: Single repo with SwiftPM modules (CLI + Core + Tachikoma)  
-**Performance Goals**: First streamed content within ~2s for typical prompts; no regression vs current providers  
-**Constraints**: Must run `peekaboo agent "hello"` with Wecode; no user-in-loop required; no secrets in repo  
-**Scale/Scope**: Add one provider integration and wiring in provider selection paths
+**Primary Dependencies**: Tachikoma provider framework, Foundation  
+**Storage**: N/A  
+**Testing**: XCTest (SwiftPM)  
+**Target Platform**: macOS  
+**Project Type**: Multi-module SwiftPM + apps  
+**Performance Goals**: 95% of streams deliver first text within 2 seconds  
+**Constraints**: Wecode does not support non-streaming text directly; aggregate
+streamed output for non-streaming requests without new auth flows  
+**Scale/Scope**: Provider integration and selection path only (no new UX flows)
 
 ## Constitution Check
 
@@ -61,32 +63,34 @@ specs/[###-feature]/
 -->
 
 ```text
-Apps/CLI/Sources/PeekabooCLI/
-├── Commands/
-├── CLI/
-└── Helpers/
+Tachikoma/
+├── Sources/Tachikoma/Providers/
+│   ├── ProviderFactory.swift
+│   ├── OpenAI/OpenAIResponsesProvider.swift
+│   └── Wecode/WecodeProvider.swift
+└── Sources/Tachikoma/Core/
+    └── Generation.swift
 
-Core/PeekabooCore/Sources/PeekabooAgentRuntime/
-
-Tachikoma/Sources/Tachikoma/
-├── Core/
-└── Providers/
-
-Apps/CLI/Tests/
-Tachikoma/Tests/
+Tachikoma/Tests/TachikomaTests/Providers/
 ```
 
-**Structure Decision**: SwiftPM modules within the monorepo; provider work lives
-in `Tachikoma/Sources/Tachikoma/Providers` with CLI integration under
-`Apps/CLI/Sources/PeekabooCLI`.
+**Structure Decision**: Provider integration lives in Tachikoma provider sources
+and related tests under Tachikoma tests.
 
-## Constitution Check (Post-Design)
+## Phase 0: Research
 
-- Autonomous Execution: No user-in-loop steps required.
-- Minimal Change Discipline: Changes scoped to provider integration and wiring.
-- Codebase-Conformant Style: Changes confined to existing Swift modules.
-- Generic, Reusable Abstractions: Aggregation logic reusable for stream-only providers.
-- Verification and Debugging: Manual CLI validation planned for `peekaboo agent "hello"`.
+- Confirm Wecode stream-to-text aggregation behavior needed for non-streaming use.
+- Identify existing provider patterns that convert streams to single responses.
+
+## Phase 1: Design & Contracts
+
+- Document data model entities for provider config, stream chunks, and combined output.
+- Define internal contracts for streaming and aggregated text expectations.
+- Draft quickstart updates describing Wecode selection and expected behavior.
+
+## Phase 2: Planning
+
+- Translate design into concrete tasks for provider implementation and tests.
 
 ## Complexity Tracking
 
