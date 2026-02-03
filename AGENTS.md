@@ -40,6 +40,7 @@
 ## Active Technologies
 - Swift 6.2 + Tachikoma (provider framework), Commander (CLI), PeekabooCore (001-add-wecode-provider)
 - N/A (reuse existing config storage) (001-add-wecode-provider)
+- Swift 6.2 + Tachikoma, Commander, PeekabooCore (001-add-wecode-provider)
 
 ## Recent Changes
 - 001-add-wecode-provider: Added Swift 6.2 + Tachikoma (provider framework), Commander (CLI), PeekabooCore
