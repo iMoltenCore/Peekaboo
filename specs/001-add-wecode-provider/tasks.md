@@ -22,7 +22,7 @@ description: "Task list for adding Wecode provider"
 
 **Purpose**: Prepare provider scaffolding and review baseline behavior
 
-- [ ] T001 Review provider interfaces in `Tachikoma/Sources/Tachikoma/Core/Provider.swift` and `Tachikoma/Sources/Tachikoma/Providers/OpenAI/OpenAIResponsesProvider.swift`
+- [x] T001 Review provider interfaces in `Tachikoma/Sources/Tachikoma/Core/Provider.swift` and `Tachikoma/Sources/Tachikoma/Providers/OpenAI/OpenAIResponsesProvider.swift`
 - [ ] T002 Create Wecode provider folder and stub in `Tachikoma/Sources/Tachikoma/Providers/Wecode/WecodeProvider.swift`
 - [ ] T003 [P] Add Wecode test scaffold in `Tachikoma/Tests/TachikomaTests/Providers/WecodeProviderTests.swift`
 
