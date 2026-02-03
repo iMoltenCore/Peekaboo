@@ -1,7 +1,6 @@
 # Repository Guidelines
 
 ## Start Here
-- Read `~/Projects/agent-scripts/{AGENTS.MD,TOOLS.MD}` before making changes (skip if missing).
 - This repo uses git submodules (`AXorcist/`, `Commander/`, `Tachikoma/`, `TauTUI/`); update them in their home repos first, then bump pointers here.
 
 ## Project Structure & Modules
