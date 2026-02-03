@@ -1,100 +1,89 @@
 ---
 
-description: "Task list for adding Wecode provider"
+description: "Tasks for Add Wecode Provider"
 ---
 
 # Tasks: Add Wecode Provider
 
 **Input**: Design documents from `/specs/001-add-wecode-provider/`
-**Prerequisites**: plan.md, spec.md, research.md, data-model.md, contracts/
+**Prerequisites**: plan.md (required), spec.md (required), research.md, data-model.md, contracts/
 
-**Tests**: Tests are REQUIRED (per constitution) and included below.
+**Tests**: Tests are REQUIRED unless explicitly waived in the specification.
 
 **Organization**: Tasks are grouped by user story to enable independent implementation and testing of each story.
 
-## Format: `[ID] [P?] [Story] Description`
-
-- **[P]**: Can run in parallel (different files, no dependencies)
-- **[Story]**: Which user story this task belongs to (e.g., US1, US2)
-- Include exact file paths in descriptions
-
 ## Phase 1: Setup (Shared Infrastructure)
 
-**Purpose**: Prepare provider scaffolding and review baseline behavior
+**Purpose**: Project initialization and basic structure
 
-- [x] T001 Review provider interfaces in `Tachikoma/Sources/Tachikoma/Core/Provider.swift` and `Tachikoma/Sources/Tachikoma/Providers/OpenAI/OpenAIResponsesProvider.swift`
-- [ ] T002 Create Wecode provider folder and stub in `Tachikoma/Sources/Tachikoma/Providers/Wecode/WecodeProvider.swift`
-- [ ] T003 [P] Add Wecode test scaffold in `Tachikoma/Tests/TachikomaTests/Providers/WecodeProviderTests.swift`
+- [ ] T001 Verify Wecode provider scaffolding exists in Tachikoma/Sources/Tachikoma/Providers/Wecode/WecodeProvider.swift
+- [ ] T002 [P] Review provider selection flow in Tachikoma/Sources/Tachikoma/Providers/ProviderFactory.swift
+- [ ] T003 [P] Review stream delta conventions in Tachikoma/Sources/Tachikoma/Core/Types.swift
 
 ---
 
 ## Phase 2: Foundational (Blocking Prerequisites)
 
-**Purpose**: Core wiring required before any user story work can proceed
+**Purpose**: Core infrastructure that MUST be complete before ANY user story can be implemented
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T004 Add Wecode model enum and metadata in `Tachikoma/Sources/Tachikoma/Models/Model.swift`
-- [ ] T005 Update provider parsing for `wecode/<model>` in `Tachikoma/Sources/Tachikoma/Providers/ProviderParser.swift`
-- [ ] T006 Wire Wecode provider creation in `Tachikoma/Sources/Tachikoma/Providers/ProviderFactory.swift`
-- [ ] T007 Add Wecode display name and API key hint mapping in `Apps/CLI/Sources/PeekabooCLI/Commands/AI/AgentCommand.swift`
-- [ ] T008 Ensure provider list parsing accepts Wecode in `Core/PeekabooCore/Sources/PeekabooAutomation/Utils/AIProviderParser.swift`
+- [ ] T004 Define Wecode model identifiers in Tachikoma/Sources/Tachikoma/Models/LanguageModel.swift
+- [ ] T005 [P] Register Wecode in provider selection flow in Tachikoma/Sources/Tachikoma/Providers/ProviderFactory.swift
+- [ ] T006 [P] Confirm provider configuration keys in Tachikoma/Sources/Tachikoma/Configuration/TachikomaConfiguration.swift
 
-**Checkpoint**: Foundation ready - user story implementation can now begin
+**Checkpoint**: Foundation ready - user story implementation can now begin in parallel
 
 ---
 
 ## Phase 3: User Story 1 - Stream text with Wecode (Priority: P1) 🎯 MVP
 
-**Goal**: Stream text output using Wecode for CLI agent requests
+**Goal**: Support streaming text output when Wecode is selected.
 
-**Independent Test**: Configure Wecode, run `peekaboo agent "hello"`, and observe streamed output.
+**Independent Test**: Issue a streaming text request and observe incremental output.
 
-### Tests for User Story 1 (REQUIRED) ⚠️
+### Tests for User Story 1 (REQUIRED unless explicitly waived) ⚠️
 
-> **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
-
-- [ ] T009 [P] [US1] Add streaming behavior tests in `Tachikoma/Tests/TachikomaTests/Providers/WecodeProviderTests.swift`
-- [ ] T010 [P] [US1] Add CLI runtime streaming smoke test in `Apps/CLI/Tests/CLIRuntimeTests/CLIRuntimeSmokeTests.swift`
+- [ ] T007 [P] [US1] Add streamText test coverage in Tachikoma/Tests/TachikomaTests/Providers/WecodeProviderTests.swift
+- [ ] T008 [P] [US1] Add provider selection test in Tachikoma/Tests/TachikomaTests/Providers/ProviderFactoryTests.swift
 
 ### Implementation for User Story 1
 
-- [ ] T011 [US1] Implement streamText flow in `Tachikoma/Sources/Tachikoma/Providers/Wecode/WecodeProvider.swift`
-- [ ] T012 [US1] Add Wecode model capabilities in `Tachikoma/Sources/Tachikoma/Models/Model.swift`
-- [ ] T013 [US1] Ensure agent flow routes to Wecode in `Apps/CLI/Sources/PeekabooCLI/Commands/AI/AgentCommand.swift`
+- [ ] T009 [US1] Implement Wecode streamText in Tachikoma/Sources/Tachikoma/Providers/Wecode/WecodeProvider.swift
+- [ ] T010 [US1] Add Wecode request/response models in Tachikoma/Sources/Tachikoma/Providers/Wecode/
+- [ ] T011 [US1] Add streaming parser in Tachikoma/Sources/Tachikoma/Providers/Wecode/
 
-**Checkpoint**: User Story 1 is functional and testable independently
+**Checkpoint**: User Story 1 should be fully functional and testable independently
 
 ---
 
 ## Phase 4: User Story 2 - Use non-streaming text with Wecode (Priority: P2)
 
-**Goal**: Provide a combined response for non-streaming requests by aggregating the stream
+**Goal**: Support non-streaming text requests by aggregating stream output.
 
-**Independent Test**: Issue a non-streaming request and verify a single combined response is returned.
+**Independent Test**: Issue a non-streaming request and receive a single combined response.
 
-### Tests for User Story 2 (REQUIRED) ⚠️
+### Tests for User Story 2 (REQUIRED unless explicitly waived) ⚠️
 
-- [ ] T014 [P] [US2] Add aggregation tests in `Tachikoma/Tests/TachikomaTests/Providers/WecodeProviderTests.swift`
-- [ ] T015 [P] [US2] Add CLI non-streaming regression test in `Apps/CLI/Tests/CLIRuntimeTests/CLIRuntimeSmokeTests.swift`
+- [ ] T012 [P] [US2] Add generateText aggregation tests in Tachikoma/Tests/TachikomaTests/Providers/WecodeProviderTests.swift
+- [ ] T013 [P] [US2] Add edge case tests for empty/failed stream in Tachikoma/Tests/TachikomaTests/Providers/WecodeProviderTests.swift
 
 ### Implementation for User Story 2
 
-- [ ] T016 [US2] Implement generalText aggregation in `Tachikoma/Sources/Tachikoma/Providers/Wecode/WecodeProvider.swift`
-- [ ] T017 [US2] Ensure generation pipeline uses aggregation for non-streaming in `Tachikoma/Sources/Tachikoma/Core/Generation.swift`
+- [ ] T014 [US2] Implement Wecode generateText aggregation in Tachikoma/Sources/Tachikoma/Providers/Wecode/WecodeProvider.swift
+- [ ] T015 [US2] Ensure finishReason and usage handling in Tachikoma/Sources/Tachikoma/Providers/Wecode/WecodeProvider.swift
 
-**Checkpoint**: User Stories 1 and 2 both work independently
+**Checkpoint**: User Story 2 should be functional and testable independently
 
 ---
 
 ## Phase 5: Polish & Cross-Cutting Concerns
 
-**Purpose**: Documentation and validation across stories
+**Purpose**: Improvements that affect multiple user stories
 
-- [ ] T018 [P] Add provider docs in `docs/providers/wecode.md`
-- [ ] T019 [P] Update provider index in `docs/providers/README.md`
-- [ ] T020 Run quickstart validation steps in `specs/001-add-wecode-provider/quickstart.md`
-- [ ] T021 Capture manual test notes in `specs/001-add-wecode-provider/quickstart.md`
+- [ ] T016 [P] Update provider documentation in docs/ (add Wecode notes)
+- [ ] T017 [P] Run unit tests for Tachikoma providers in Tachikoma/Tests/
+- [ ] T018 Run `peekaboo agent "hello"` as the final verification step
 
 ---
 
@@ -104,23 +93,27 @@ description: "Task list for adding Wecode provider"
 
 - **Setup (Phase 1)**: No dependencies - can start immediately
 - **Foundational (Phase 2)**: Depends on Setup completion - BLOCKS all user stories
-- **User Stories (Phase 3+)**: Depend on Foundational phase completion
-- **Polish (Final Phase)**: Depends on desired user stories being complete
+- **User Stories (Phase 3+)**: All depend on Foundational phase completion
+  - User stories can then proceed in parallel (if staffed)
+  - Or sequentially in priority order (P1 → P2)
+- **Polish (Final Phase)**: Depends on all desired user stories being complete
 
 ### User Story Dependencies
 
-- **User Story 1 (P1)**: Can start after Foundational - no dependencies on other stories
-- **User Story 2 (P2)**: Can start after Foundational - uses US1 streaming path but remains independently testable
+- **User Story 1 (P1)**: Can start after Foundational (Phase 2) - No dependencies on other stories
+- **User Story 2 (P2)**: Can start after Foundational (Phase 2) - Depends on US1 stream implementation
 
 ### Within Each User Story
 
-- Tests MUST be written and FAIL before implementation
-- Provider wiring before CLI validation
+- Tests MUST be written and fail before implementation
+- Stream implementation before aggregation
 - Story complete before moving to next priority
 
 ### Parallel Opportunities
 
-- T003, T009, T010, T014, T015, T018, T019 can run in parallel
+- T002 and T003 can run in parallel
+- T007 and T008 can run in parallel
+- T012 and T013 can run in parallel
 
 ---
 
@@ -128,8 +121,8 @@ description: "Task list for adding Wecode provider"
 
 ```bash
 # Launch tests for User Story 1 together:
-Task: "Add streaming behavior tests in Tachikoma/Tests/TachikomaTests/Providers/WecodeProviderTests.swift"
-Task: "Add CLI runtime streaming smoke test in Apps/CLI/Tests/CLIRuntimeTests/CLIRuntimeSmokeTests.swift"
+Task: "Add streamText test coverage in Tachikoma/Tests/TachikomaTests/Providers/WecodeProviderTests.swift"
+Task: "Add provider selection test in Tachikoma/Tests/TachikomaTests/Providers/ProviderFactoryTests.swift"
 ```
 
 ---
@@ -141,10 +134,20 @@ Task: "Add CLI runtime streaming smoke test in Apps/CLI/Tests/CLIRuntimeTests/CL
 1. Complete Phase 1: Setup
 2. Complete Phase 2: Foundational
 3. Complete Phase 3: User Story 1
-4. **STOP and VALIDATE**: Run `peekaboo agent "hello"` with Wecode
+4. **STOP and VALIDATE**: Test streaming independently
 
 ### Incremental Delivery
 
-1. Foundation ready → User Story 1 → validate streaming
-2. Add User Story 2 → validate aggregation
-3. Polish and document
+1. Complete Setup + Foundational → Foundation ready
+2. Add User Story 1 → Test independently → Validate streaming
+3. Add User Story 2 → Test independently → Validate aggregation
+4. Run final verification `peekaboo agent "hello"`
+
+---
+
+## Notes
+
+- [P] tasks = different files, no dependencies
+- [Story] label maps task to specific user story for traceability
+- Each user story should be independently completable and testable
+- Commit after each task or logical group
