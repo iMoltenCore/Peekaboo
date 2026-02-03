@@ -31,7 +31,11 @@
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-[Gates determined based on constitution file]
+- Autonomous Execution: plan does not require user-in-loop approvals to proceed.
+- Minimal Change Discipline: scope stays at the smallest viable change set.
+- Codebase-Conformant Style: plan references existing structure and style tooling.
+- Generic, Reusable Abstractions: design avoids one-off solutions when reuse helps.
+- Verification and Debugging: test/debug steps are identified or gaps are justified.
 
 ## Project Structure
 
