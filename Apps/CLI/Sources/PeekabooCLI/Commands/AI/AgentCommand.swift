@@ -293,20 +293,18 @@ extension AgentCommand {
                 return existing
             }
 
-            guard let peekabooServices = services as? PeekabooServices else {
+            if let peekabooServices = services as? PeekabooServices {
+                peekabooServices.refreshAgentService()
+                if let refreshed = peekabooServices.agent {
+                    return refreshed
+                }
+            }
+
+            guard self.hasConfiguredAIProvider(configuration: services.configuration) else {
                 return nil
             }
 
-            peekabooServices.refreshAgentService()
-            if let refreshed = peekabooServices.agent {
-                return refreshed
-            }
-
-            guard self.hasConfiguredAIProvider(configuration: peekabooServices.configuration) else {
-                return nil
-            }
-
-            let providers = peekabooServices.configuration.getAIProviders()
+            let providers = services.configuration.getAIProviders()
             let defaultModel: LanguageModel = {
                 guard let firstProvider = providers.split(separator: ",").first else {
                     return .openai(.gpt51)
@@ -328,7 +326,7 @@ extension AgentCommand {
             }()
 
             do {
-                return try PeekabooAgentService(services: peekabooServices, defaultModel: defaultModel)
+                return try PeekabooAgentService(services: services, defaultModel: defaultModel)
             } catch {
                 self.printAgentExecutionError("Failed to initialize agent service: \(error.localizedDescription)")
                 return nil
