@@ -1,0 +1,94 @@
+openapi: 3.0.3
+info:
+  title: Wecode Text Generation Contract
+  version: 1.0.0
+  description: Contract for streaming and aggregated text generation with Wecode.
+servers:
+  - url: https://example.invalid
+paths:
+  /text:
+    post:
+      summary: Generate a single aggregated text response
+      operationId: generateText
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TextRequest'
+      responses:
+        '200':
+          description: Aggregated text response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TextResponse'
+        '400':
+          description: Invalid request
+        '500':
+          description: Provider error
+  /text/stream:
+    post:
+      summary: Stream text response
+      operationId: streamText
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TextRequest'
+      responses:
+        '200':
+          description: Streamed text events
+          content:
+            text/event-stream:
+              schema:
+                $ref: '#/components/schemas/TextStreamEvent'
+        '400':
+          description: Invalid request
+        '500':
+          description: Provider error
+components:
+  schemas:
+    TextRequest:
+      type: object
+      required:
+        - prompt
+      properties:
+        prompt:
+          type: string
+          description: The user prompt to generate text for.
+        stream:
+          type: boolean
+          description: Whether to stream the response.
+        model:
+          type: string
+          description: Optional model identifier.
+    TextResponse:
+      type: object
+      required:
+        - text
+      properties:
+        text:
+          type: string
+          description: Aggregated response text.
+        finishReason:
+          type: string
+          description: Reason the response completed.
+    TextStreamEvent:
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          type: string
+          description: Event type (text, tool, done, error).
+        content:
+          type: string
+          description: Text content for text events.
+        toolCall:
+          type: object
+          description: Tool call payload when present.
+        usage:
+          type: object
+          description: Usage metadata for done events.

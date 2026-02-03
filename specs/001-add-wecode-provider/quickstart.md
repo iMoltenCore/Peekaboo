@@ -8,12 +8,12 @@ text paths both work.
 ## Prerequisites
 
 - macOS with required permissions for Peekaboo CLI.
-- A Wecode API key available locally at `/tmp/key`.
+- Wecode credentials available via existing configuration mechanisms.
 
 ## Steps
 
 1. Build the CLI (`peekaboo`) from this repository.
-2. Configure the Wecode provider to use the API key at `/tmp/key`.
+2. Configure the Wecode provider using the standard provider configuration flow.
 3. Run: `peekaboo agent "hello"` and confirm output appears.
 4. Verify a non-streaming text request returns a single combined response.
 
