@@ -80,6 +80,14 @@ Tachikoma/Tests/
 in `Tachikoma/Sources/Tachikoma/Providers` with CLI integration under
 `Apps/CLI/Sources/PeekabooCLI`.
 
+## Constitution Check (Post-Design)
+
+- Autonomous Execution: No user-in-loop steps required.
+- Minimal Change Discipline: Changes scoped to provider integration and wiring.
+- Codebase-Conformant Style: Changes confined to existing Swift modules.
+- Generic, Reusable Abstractions: Aggregation logic reusable for stream-only providers.
+- Verification and Debugging: Manual CLI validation planned for `peekaboo agent "hello"`.
+
 ## Complexity Tracking
 
 > **Fill ONLY if Constitution Check has violations that must be justified**
