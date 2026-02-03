@@ -1,15 +1,15 @@
 # Implementation Plan: Add Wecode Provider
 
 **Branch**: `001-add-wecode-provider` | **Date**: 2026-02-03 | **Spec**: specs/001-add-wecode-provider/spec.md
-**Input**: Feature specification from `specs/001-add-wecode-provider/spec.md`
+**Input**: Feature specification from `/specs/001-add-wecode-provider/spec.md`
 
 **Note**: This template is filled in by the `/speckit.plan` command. See `.specify/templates/commands/plan.md` for the execution workflow.
 
 ## Summary
 
-Add Wecode as a selectable provider that streams text output and supports
-non-streaming text by aggregating stream chunks, aligning behavior with existing
-stream-first providers while preserving current workflows.
+Add Wecode as a selectable provider for text generation with streaming support, and
+support non-streaming requests by aggregating streamed content into a single
+response.
 
 ## Technical Context
 
@@ -20,15 +20,14 @@ stream-first providers while preserving current workflows.
 -->
 
 **Language/Version**: Swift 6.2  
-**Primary Dependencies**: Tachikoma provider framework, Foundation  
+**Primary Dependencies**: Tachikoma, Commander, PeekabooCore  
 **Storage**: N/A  
-**Testing**: XCTest (SwiftPM)  
-**Target Platform**: macOS  
-**Project Type**: Multi-module SwiftPM + apps  
-**Performance Goals**: 95% of streams deliver first text within 2 seconds  
-**Constraints**: Wecode does not support non-streaming text directly; aggregate
-streamed output for non-streaming requests without new auth flows  
-**Scale/Scope**: Provider integration and selection path only (no new UX flows)
+**Testing**: XCTest (Tachikoma tests)  
+**Target Platform**: macOS 13+ (CLI and mac app), iOS 16+ compatibility for provider layer  
+**Project Type**: Multi-module Swift workspace (CLI + mac app + shared core)  
+**Performance Goals**: First streamed text within 2 seconds for 95% of requests  
+**Constraints**: Streaming must preserve order; non-streaming aggregation must not lose content  
+**Scale/Scope**: Single provider addition, minimal changes to existing provider selection
 
 ## Constitution Check
 
@@ -63,34 +62,50 @@ specs/[###-feature]/
 -->
 
 ```text
-Tachikoma/
-├── Sources/Tachikoma/Providers/
-│   ├── ProviderFactory.swift
-│   ├── OpenAI/OpenAIResponsesProvider.swift
-│   └── Wecode/WecodeProvider.swift
-└── Sources/Tachikoma/Core/
-    └── Generation.swift
+Apps/CLI/
+├── Sources/
+└── Tests/
 
-Tachikoma/Tests/TachikomaTests/Providers/
+Core/PeekabooCore/
+
+Tachikoma/
+├── Sources/
+│   └── Tachikoma/
+│       ├── Core/
+│       └── Providers/
+│           ├── OpenAI/
+│           └── Wecode/
+└── Tests/
 ```
 
-**Structure Decision**: Provider integration lives in Tachikoma provider sources
-and related tests under Tachikoma tests.
+**Structure Decision**: Provider implementation lives in `Tachikoma` with shared
+core behavior in `Tachikoma/Sources/Tachikoma/Core`; selection flows are wired
+through provider factory in `Tachikoma/Sources/Tachikoma/Providers`.
 
-## Phase 0: Research
+## Phase 0: Outline & Research
 
-- Confirm Wecode stream-to-text aggregation behavior needed for non-streaming use.
-- Identify existing provider patterns that convert streams to single responses.
+- Review existing provider patterns (especially `OpenAIResponsesProvider`) and
+  current Wecode stub.
+- Confirm how non-streaming requests are represented in the provider interface.
 
 ## Phase 1: Design & Contracts
 
-- Document data model entities for provider config, stream chunks, and combined output.
-- Define internal contracts for streaming and aggregated text expectations.
-- Draft quickstart updates describing Wecode selection and expected behavior.
+- Define data model for stream chunks and combined responses.
+- Produce a lightweight API contract for streaming and aggregated text.
+- Draft quickstart guidance for enabling Wecode in existing flows.
+- Update agent context with new provider details.
+
+## Phase 1: Constitution Re-check
+
+- Autonomous Execution: No user-in-loop dependencies required.
+- Minimal Change Discipline: Add provider implementation and wiring only.
+- Codebase-Conformant Style: Follow Swift and Tachikoma conventions.
+- Generic, Reusable Abstractions: Prefer shared streaming aggregation utility if needed.
+- Verification and Debugging: Add or update provider tests where applicable.
 
 ## Phase 2: Planning
 
-- Translate design into concrete tasks for provider implementation and tests.
+- Break implementation into tasks after research and design outputs are complete.
 
 ## Complexity Tracking
 
