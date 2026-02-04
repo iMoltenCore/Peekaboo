@@ -401,12 +401,11 @@ public final class PeekabooServices {
 
         // Check for available API keys
         let hasOpenAI = self.configuration.getOpenAIAPIKey() != nil && !self.configuration.getOpenAIAPIKey()!.isEmpty
-        let hasWecode = self.configuration.getWecodeAPIKey() != nil && !self.configuration.getWecodeAPIKey()!.isEmpty
         let hasAnthropic = self.configuration.getAnthropicAPIKey() != nil && !self.configuration.getAnthropicAPIKey()!
             .isEmpty
         let hasOllama = false
 
-        if hasOpenAI || hasWecode || hasAnthropic || hasOllama {
+        if hasOpenAI || hasAnthropic || hasOllama {
             let agentConfig = self.configuration.getConfiguration()
             let providers = self.configuration.getAIProviders()
             let environmentProviders = EnvironmentVariables.value(for: "PEEKABOO_AI_PROVIDERS")

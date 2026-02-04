@@ -66,7 +66,6 @@ public final class PeekabooAIService {
         // Map provider/model from LanguageModel enum
         let (provider, modelName): (String, String) = switch selectedModel {
         case let .openai(m): ("openai", m.modelId)
-        case let .wecode(m): ("wecode", m.modelId)
         case let .anthropic(m): ("anthropic", m.modelId)
         case let .google(m): ("google", m.rawValue)
         case let .mistral(m): ("mistral", m.rawValue)
@@ -143,11 +142,6 @@ public final class PeekabooAIService {
             case "openai":
                 if case .openai = loose { return loose }
                 return .openai(.custom(modelString))
-            case "wecode":
-                // Wecode-backed provider: only supports streaming Responses API.
-                // The upstream only exposes gpt-5.2; ignore model selection for now.
-                _ = modelString
-                return .wecode(.gpt52)
             case "anthropic":
                 if case .anthropic = loose { return loose }
                 return .anthropic(.custom(modelString))

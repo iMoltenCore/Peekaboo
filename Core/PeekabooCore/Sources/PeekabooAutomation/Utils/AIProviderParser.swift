@@ -64,7 +64,6 @@ public enum AIProviderParser {
         hasOpenAI: Bool = false,
         hasAnthropic: Bool = false,
         hasOllama: Bool = false,
-        hasWecode: Bool = false,
         configuredDefault: String? = nil) -> String
     {
         // If there's a configured default, use it
@@ -78,8 +77,6 @@ public enum AIProviderParser {
             switch config.provider.lowercased() {
             case "openai":
                 if hasOpenAI { return "gpt-5.1" }
-            case "wecode":
-                if hasWecode { return "gpt-5.2" }
             case "anthropic":
                 if hasAnthropic { return "claude-sonnet-4.5" }
             case "ollama":

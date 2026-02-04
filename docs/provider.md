@@ -82,13 +82,7 @@ Custom providers are configured in `~/.peekaboo/config.json`:
 ### Provider Types
 
 - **`openai`**: OpenAI-compatible endpoints (Chat Completions API)
-- **`wecode`**: Wecode Responses proxy (stream-only; model fixed to gpt-5.2)
 - **`anthropic`**: Anthropic-compatible endpoints (Messages API)
-
-### Wecode Provider
-
-- **API key**: `WECODE_API_KEY` (tests may load `/tmp/key` into `WECODE_API_KEY`)
-- **Base URL override**: `WECODE_BASE_URL` (preferred form: `https://api.wecode.zone/openai`; `/responses` suffix is accepted)
 
 ### Environment Variables vs Credentials
 

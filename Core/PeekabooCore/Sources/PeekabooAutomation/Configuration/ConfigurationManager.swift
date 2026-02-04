@@ -421,23 +421,6 @@ public final class ConfigurationManager: @unchecked Sendable {
         return nil
     }
 
-    /// Get Wecode API key with proper precedence
-    ///
-    /// Wecode is an OpenAI Responses proxy used by the `wecode` provider.
-    public func getWecodeAPIKey() -> String? {
-        // 1. Environment variable (highest priority)
-        if let envValue = self.environmentValue(for: "WECODE_API_KEY") {
-            return envValue
-        }
-
-        // 2. Credentials file
-        if let credValue = credentials["WECODE_API_KEY"] {
-            return credValue
-        }
-
-        return nil
-    }
-
     /// Get Anthropic API key with proper precedence
     public func getAnthropicAPIKey() -> String? {
         // 1. Environment variable (highest priority)

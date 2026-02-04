@@ -11,9 +11,6 @@ struct AIProviderParserTests {
         #expect(AIProviderParser.parse("openai/gpt-4") == AIProviderParser.ProviderConfig(
             provider: "openai",
             model: "gpt-4"))
-        #expect(AIProviderParser.parse("wecode/gpt-5.2") == AIProviderParser.ProviderConfig(
-            provider: "wecode",
-            model: "gpt-5.2"))
         #expect(AIProviderParser.parse("anthropic/claude-3") == AIProviderParser.ProviderConfig(
             provider: "anthropic",
             model: "claude-3"))
