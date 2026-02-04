@@ -68,6 +68,8 @@ public final class PeekabooAgentService: AgentServiceProtocol {
                 config.getAPIKey(for: .anthropic)
             case .google:
                 config.getAPIKey(for: .google)
+            case .wecode:
+                config.getAPIKey(for: .wecode)
             case .mistral:
                 config.getAPIKey(for: .mistral)
             case .groq:

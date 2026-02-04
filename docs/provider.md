@@ -7,7 +7,7 @@ read_when:
 
 # Custom AI Provider Configuration
 
-This document explains how to configure AI providers in Peekaboo, including built-ins (OpenAI, Anthropic, Grok/xAI, Gemini) and custom OpenAI-/Anthropic-compatible endpoints.
+This document explains how to configure AI providers in Peekaboo, including built-ins (OpenAI, Anthropic, Grok/xAI, Gemini, Wecode) and custom OpenAI-/Anthropic-compatible endpoints.
 
 See also:
 - `providers/README.md` for capability comparison and links to provider-specific docs.
@@ -30,6 +30,7 @@ Peekaboo supports custom AI providers through configuration-based setup. This al
 - **Anthropic**: Claude 4 / Max / Pro / 3.x (OAuth or API key)
 - **Grok (xAI)**: Grok 4, Grok 2 series (API key; `grok` canonical, `xai` alias)
 - **Gemini**: Gemini 1.5 family (API key)
+- **Wecode**: Streaming-first Wecode models (API key)
 - **Ollama**: Local models with tool support
 
 ### Custom Providers

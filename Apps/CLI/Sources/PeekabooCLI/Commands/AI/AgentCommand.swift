@@ -288,8 +288,52 @@ extension AgentCommand {
         }
 
         let services = runtime.services
+        let agentService: (any AgentServiceProtocol)? = {
+            if let existing = services.agent {
+                return existing
+            }
 
-        guard let agentService = services.agent else {
+            if let peekabooServices = services as? PeekabooServices {
+                peekabooServices.refreshAgentService()
+                if let refreshed = peekabooServices.agent {
+                    return refreshed
+                }
+            }
+
+            guard self.hasConfiguredAIProvider(configuration: services.configuration) else {
+                return nil
+            }
+
+            let providers = services.configuration.getAIProviders()
+            let defaultModel: LanguageModel = {
+                guard let firstProvider = providers.split(separator: ",").first else {
+                    return .openai(.gpt51)
+                }
+
+                let parts = firstProvider.split(separator: "/", maxSplits: 1, omittingEmptySubsequences: true)
+                let providerName = parts.first?.lowercased()
+                let modelName = parts.count > 1 ? String(parts[1]) : ""
+
+                if providerName == "wecode" {
+                    if modelName.lowercased() == "wecode" || modelName.isEmpty {
+                        return .wecode(.wecode)
+                    }
+                    return .wecode(.custom(modelName))
+                }
+
+                let fallbackName = modelName.isEmpty ? String(parts.last ?? "") : modelName
+                return LanguageModel.parse(from: fallbackName) ?? .openai(.gpt51)
+            }()
+
+            do {
+                return try PeekabooAgentService(services: services, defaultModel: defaultModel)
+            } catch {
+                self.printAgentExecutionError("Failed to initialize agent service: \(error.localizedDescription)")
+                return nil
+            }
+        }()
+
+        guard let agentService else {
             self.emitAgentUnavailableMessage()
             return
         }
@@ -920,14 +964,18 @@ extension AgentCommand {
         let hasOpenAI = configuration.getOpenAIAPIKey()?.isEmpty == false
         let hasAnthropic = configuration.getAnthropicAPIKey()?.isEmpty == false
         let hasGemini = configuration.getGeminiAPIKey()?.isEmpty == false
-        return hasOpenAI || hasAnthropic || hasGemini
+        let hasWecodeEnv = ProcessInfo.processInfo.environment["WECODE_API_KEY"]?.isEmpty == false
+        let hasWecode = configuration.getWecodeAPIKey()?.isEmpty == false
+            || TachikomaConfiguration.current.getAPIKey(for: .wecode)?.isEmpty == false
+            || hasWecodeEnv
+        return hasOpenAI || hasAnthropic || hasGemini || hasWecode
     }
 
     private func emitAgentUnavailableMessage() {
         if self.jsonOutput {
             let error = [
                 "success": false,
-                "error": "Agent service not available. Please set OPENAI_API_KEY, ANTHROPIC_API_KEY, or GEMINI_API_KEY."
+                "error": "Agent service not available. Please set OPENAI_API_KEY, ANTHROPIC_API_KEY, GEMINI_API_KEY, or WECODE_API_KEY."
             ] as [String: Any]
             if let jsonData = try? JSONSerialization.data(withJSONObject: error, options: .prettyPrinted),
                let jsonString = String(data: jsonData, encoding: .utf8) {
@@ -938,7 +986,7 @@ extension AgentCommand {
         } else {
             let errorPrefix = [
                 "\(TerminalColor.red)Error: Agent service not available.",
-                " Please set OPENAI_API_KEY, ANTHROPIC_API_KEY, or GEMINI_API_KEY."
+                " Please set OPENAI_API_KEY, ANTHROPIC_API_KEY, GEMINI_API_KEY, or WECODE_API_KEY."
             ].joined()
             let errorMessageLine = [errorPrefix, "\(TerminalColor.reset)"].joined()
             print(errorMessageLine)
@@ -950,6 +998,15 @@ extension AgentCommand {
     func parseModelString(_ modelString: String) -> LanguageModel? {
         let trimmed = modelString.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { return nil }
+
+        let providerParts = trimmed.split(separator: "/", maxSplits: 1, omittingEmptySubsequences: true)
+        if providerParts.first?.lowercased() == "wecode" {
+            let modelPart = providerParts.count == 2 ? String(providerParts[1]) : ""
+            if modelPart.isEmpty || modelPart.lowercased() == "wecode" {
+                return .wecode(.wecode)
+            }
+            return .wecode(.custom(modelPart))
+        }
 
         guard let parsed = LanguageModel.parse(from: trimmed) else {
             return nil
@@ -1031,6 +1088,8 @@ extension AgentCommand {
             return configuration.getAnthropicAPIKey()?.isEmpty == false
         case .google:
             return configuration.getGeminiAPIKey()?.isEmpty == false
+        case .wecode:
+            return configuration.getWecodeAPIKey()?.isEmpty == false
         default:
             return false
         }
@@ -1044,6 +1103,8 @@ extension AgentCommand {
             "Anthropic"
         case .google:
             "Google"
+        case .wecode:
+            "Wecode"
         default:
             "the selected provider"
         }
@@ -1057,6 +1118,8 @@ extension AgentCommand {
             "ANTHROPIC_API_KEY"
         case .google:
             "GEMINI_API_KEY"
+        case .wecode:
+            "WECODE_API_KEY"
         default:
             "provider API key"
         }

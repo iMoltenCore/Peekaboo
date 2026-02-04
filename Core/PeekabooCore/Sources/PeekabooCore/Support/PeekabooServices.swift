@@ -403,9 +403,15 @@ public final class PeekabooServices {
         let hasOpenAI = self.configuration.getOpenAIAPIKey() != nil && !self.configuration.getOpenAIAPIKey()!.isEmpty
         let hasAnthropic = self.configuration.getAnthropicAPIKey() != nil && !self.configuration.getAnthropicAPIKey()!
             .isEmpty
+        let hasWecodeFromConfig = self.configuration.getWecodeAPIKey()
+        let hasWecodeFromTachikoma = TachikomaConfiguration.current.getAPIKey(for: .wecode)
+        let hasWecodeFromEnv = EnvironmentVariables.value(for: "WECODE_API_KEY")
+        let hasWecode = (hasWecodeFromConfig?.isEmpty == false)
+            || (hasWecodeFromTachikoma?.isEmpty == false)
+            || (hasWecodeFromEnv?.isEmpty == false)
         let hasOllama = false
 
-        if hasOpenAI || hasAnthropic || hasOllama {
+        if hasOpenAI || hasAnthropic || hasWecode || hasOllama {
             let agentConfig = self.configuration.getConfiguration()
             let providers = self.configuration.getAIProviders()
             let environmentProviders = EnvironmentVariables.value(for: "PEEKABOO_AI_PROVIDERS")
@@ -414,6 +420,7 @@ public final class PeekabooServices {
                 providers: providers,
                 hasOpenAI: hasOpenAI,
                 hasAnthropic: hasAnthropic,
+                hasWecode: hasWecode,
                 hasOllama: hasOllama,
                 configuredDefault: agentConfig?.agent?.defaultModel,
                 isEnvironmentProvided: environmentProviders != nil)
@@ -596,7 +603,11 @@ extension PeekabooServices {
         let components = sources.providers
             .split(separator: ",")
             .map { $0.trimmingCharacters(in: .whitespaces) }
-        let environmentModel = components.first?.split(separator: "/").last.map(String.init)
+        let firstProvider = components.first
+        let providerParts = firstProvider?.split(separator: "/", maxSplits: 1, omittingEmptySubsequences: true)
+        let providerName = providerParts?.first?.lowercased()
+        let providerModel = providerParts?.count == 2 ? String(providerParts?[1] ?? "") : nil
+        let environmentModel = providerName == "wecode" ? "wecode" : providerModel
 
         let hasConflict = sources.isEnvironmentProvided
             && sources.configuredDefault != nil
@@ -610,6 +621,8 @@ extension PeekabooServices {
             "claude-sonnet-4.5"
         } else if sources.hasOpenAI {
             "gpt-5.1"
+        } else if sources.hasWecode {
+            "wecode"
         } else if sources.hasOllama {
             "gpt-5.1"
         } else {
@@ -636,6 +649,7 @@ private struct ModelSources {
     let providers: String
     let hasOpenAI: Bool
     let hasAnthropic: Bool
+    let hasWecode: Bool
     let hasOllama: Bool
     let configuredDefault: String?
     let isEnvironmentProvided: Bool

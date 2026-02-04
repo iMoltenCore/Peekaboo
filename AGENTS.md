@@ -1,7 +1,6 @@
 # Repository Guidelines
 
 ## Start Here
-- Read `~/Projects/agent-scripts/{AGENTS.MD,TOOLS.MD}` before making changes (skip if missing).
 - This repo uses git submodules (`AXorcist/`, `Commander/`, `Tachikoma/`, `TauTUI/`); update them in their home repos first, then bump pointers here.
 
 ## Project Structure & Modules
@@ -37,3 +36,11 @@
 ## Security & Configuration Tips
 - Secrets and provider tokens live under `~/.peekaboo` (managed by Tachikoma); never commit credentials or sample keys.
 - Respect permissions flows documented in `docs/permissions.md`; avoid editing derived artifacts—regenerate via the provided scripts instead.
+
+## Active Technologies
+- Swift 6.2 + Tachikoma (provider framework), Commander (CLI), PeekabooCore (001-add-wecode-provider)
+- N/A (reuse existing config storage) (001-add-wecode-provider)
+- Swift 6.2 + Tachikoma, Commander, PeekabooCore (001-add-wecode-provider)
+
+## Recent Changes
+- 001-add-wecode-provider: Added Swift 6.2 + Tachikoma (provider framework), Commander (CLI), PeekabooCore
