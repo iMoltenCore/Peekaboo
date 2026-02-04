@@ -1,3 +1,0 @@
-\u002d\u002d\u002d
-name: test
-\u002d\u002d\u002d

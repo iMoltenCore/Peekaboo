@@ -1,7 +1,0 @@
----
-name: test
----
-
-# Sample
-
-ok

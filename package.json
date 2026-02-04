@@ -78,7 +78,6 @@
     "arm64"
   ],
   "devDependencies": {
-    "chrome-devtools-mcp": "0.12.1",
-    "xcodebuildmcp": "^1.15.1"
+    "chrome-devtools-mcp": "0.12.1"
   }
 }
