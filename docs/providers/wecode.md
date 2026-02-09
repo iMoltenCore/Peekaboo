@@ -12,7 +12,7 @@ Wecode is a streaming-first provider in Tachikoma. Peekaboo aggregates the strea
 ## Configure
 
 - API key: `WECODE_API_KEY`
-- Optional base URL override: `WECODE_BASE_URL` (default: `https://api.wecode.zone/openai`)
+- Optional base URL override: `WECODE_BASE_URL` (default: `https://api.wecodemaster.com/v1`)
 - Provider string: `wecode/<model>` (only `gpt-5.2`; `wecode` is an alias)
 
 ```bash
